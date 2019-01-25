@@ -1,0 +1,41 @@
+{
+    "version": "0.1.0",
+    "name": "madeitbelgium/seo-analyzer",
+    "description": "SEO Analyzer",
+    "keywords": ["SEO", "Analyzer", "onpage", "on page", "on", "page", "seo"],
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Tjebbe Lievens",
+            "email": "tjebbe.lievens@madeit.be"
+        }
+    ],
+    "require": {
+        "php": ">=5.6",
+        "illuminate/support": "~5.0",
+        "guzzlehttp/guzzle": "~6.0",
+        "ivopetkov/html5-dom-document-php": "1.*"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "7.*|6.*",
+        "php-coveralls/php-coveralls": "~2.1"
+    },
+    "autoload": {
+        "classmap": [
+            "src/"
+        ],
+        "psr-4": {
+            "MadeITBelgium\\SeoAnalyzer\\": "src/"
+        }
+    },
+    "extra": {
+        "laravel": {
+            "providers": [
+                "MadeITBelgium\\SeoAnalyzer\\SeoServiceProvider"
+            ],
+            "aliases": {
+                "Seo": "MadeITBelgium\\SeoAnalyzer\\SeoFacade"
+            }
+        }
+    }
+}

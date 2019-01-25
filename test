@@ -1,0 +1,581 @@
+PHPUnit 7.5.2 by Sebastian Bergmann and contributors.
+
+Runtime:       PHP 7.2.13
+Configuration: /root/projects/seo-analyzer/phpunit.xml.dist
+Error:         No code coverage driver is available
+
+.                                                                   1 / 1 (100%)Array
+(
+    [url] => https://www.madeit.be/haal-meer-uit-linkedin-met-deze-7-tips/
+    [cannonical] => https://www.madeit.be/haal-meer-uit-linkedin-met-deze-7-tips/
+    [baseUrl] => https://www.madeit.be//haal-meer-uit-linkedin-met-deze-7-tips/
+    [domainUrl] => https://www.madeit.be
+    [domainname] => www.madeit.be
+    [title] => Haal meer uit LinkedIn met deze 7 tips - Made I.T.
+    [description] => 
+    [loadtime] => 0.268105
+    [full_page] => Array
+        (
+            [codeToTxtRatio] => Array
+                (
+                    [total_length] => 98149
+                    [text_length] => 7590
+                    [ratio] => 7.7331404293472
+                )
+
+            [word_count] => 693
+            [keywords] => Array
+                (
+                    [linkedin] => 9
+                    [bericht] => 5
+                    [contact] => 5
+                    [personen] => 5
+                    [connectieverzoek] => 4
+                    [mensen] => 4
+                    [contacten] => 4
+                    [reactie] => 4
+                    [software] => 4
+                    [biedt] => 3
+                    [website] => 3
+                    [zoeken] => 3
+                    [media] => 3
+                    [social] => 3
+                    [mogelijkheid] => 3
+                    [wordpress] => 3
+                    [naam] => 3
+                    [groep] => 3
+                    [interessante] => 3
+                    [ideale] => 3
+                    [lievens] => 3
+                    [tjebbe] => 3
+                    [profiel] => 3
+                )
+
+            [longTailKeywords] => Array
+                (
+                    [social media] => 3
+                    [linkedin] => 9
+                    [contact] => 5
+                    [personen] => 5
+                    [bericht] => 5
+                    [mensen] => 4
+                    [software] => 4
+                    [reactie] => 4
+                    [contacten] => 4
+                    [connectieverzoek] => 4
+                    [social] => 3
+                    [naam] => 3
+                    [groep] => 3
+                    [profiel] => 3
+                    [interessante] => 3
+                    [zoeken] => 3
+                    [mogelijkheid] => 3
+                    [biedt] => 3
+                    [media] => 3
+                    [ideale] => 3
+                    [lievens] => 3
+                    [tjebbe] => 3
+                    [wordpress] => 3
+                    [website] => 3
+                )
+
+            [headers] => Array
+                (
+                    [h1] => Array
+                        (
+                            [count] => 1
+                            [words] => 7
+                            [keywords] => Array
+                                (
+                                    [haal] => 1
+                                    [meer] => 1
+                                    [uit] => 1
+                                    [linkedin] => 1
+                                    [tips] => 1
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h2] => Array
+                        (
+                            [count] => 2
+                            [words] => 5
+                            [keywords] => Array
+                                (
+                                    [berichtnavigatie] => 1
+                                    [contact] => 1
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h3] => Array
+                        (
+                            [count] => 9
+                            [words] => 46
+                            [keywords] => Array
+                                (
+                                    [connecteer] => 2
+                                    [contacten] => 2
+                                    [reactie] => 2
+                                    [linkedin] => 2
+                                    [blogberichten] => 1
+                                    [software] => 1
+                                    [converseer] => 1
+                                    [groepen] => 1
+                                    [publiceer] => 1
+                                    [voeg] => 1
+                                    [geef] => 1
+                                    [annuleren] => 1
+                                    [contact] => 1
+                                    [andere] => 1
+                                    [gericht] => 1
+                                    [integreer] => 1
+                                    [nieuwe] => 1
+                                    [huidige] => 1
+                                    [online] => 1
+                                    [offline] => 1
+                                    [toe] => 1
+                                    [mensen] => 1
+                                    [zoek] => 1
+                                    [kent] => 1
+                                    [ga] => 1
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h4] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h5] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h6] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                )
+
+            [links] => Array
+                (
+                    [count] => 43
+                    [words] => 67
+                    [keywords] => Array
+                        (
+                            [wordpress] => 3
+                            [design] => 2
+                            [amp] => 2
+                            [webdesign] => 2
+                            [wp] => 2
+                            [social] => 2
+                            [media] => 2
+                            [madeit] => 2
+                            [grafisch] => 2
+                            [oktober] => 2
+                            [communicatie] => 2
+                            [fotografie] => 2
+                            [onderhoud] => 2
+                            [info] => 1
+                            [www] => 1
+                            [https] => 1
+                            [ads] => 1
+                            [app] => 1
+                            [cloud] => 1
+                            [development] => 1
+                            [voorwaarden] => 1
+                            [privacy] => 1
+                            [emerald] => 1
+                            [hosting] => 1
+                            [sluiten] => 1
+                            [cookie-] => 1
+                            [google] => 1
+                            [tricks] => 1
+                            [security] => 1
+                            [home] => 1
+                            [apps] => 1
+                            [diensten] => 1
+                            [software] => 1
+                            [forms] => 1
+                            [plugin] => 1
+                            [blog] => 1
+                            [bericht] => 1
+                            [tjebbe] => 1
+                            [lievens] => 1
+                            [tips] => 1
+                            [linkedin] => 1
+                            [reactie] => 1
+                            [annuleren] => 1
+                            [vorig] => 1
+                            [privacybeleid] => 1
+                        )
+
+                    [longTailKeywords] => Array
+                        (
+                        )
+
+                    [internal] => 36
+                    [external] => 7
+                    [follow] => 36
+                    [nofollow] => 7
+                )
+
+            [images] => Array
+                (
+                    [count] => 3
+                    [count_alt] => 2
+                    [words] => 0
+                    [keywords] => Array
+                        (
+                        )
+
+                    [longTailKeywords] => Array
+                        (
+                        )
+
+                )
+
+        )
+
+    [main_text] => Array
+        (
+            [text] => 
+
+        
+
+Online netwerken blijft een ideale manier om je contactenbestand uit te breiden en te onderhouden. Om in contact te komen met professionals, ervaringen te delen, te helpen en geholpen te worden is LinkedIn een ideale tool.
+
+
+
+
+
+
+
+
+
+Voeg je huidige online en offline contacten toe aan LinkedIn
+
+
+
+
+
+Ook al staan deze personen al in je adresboek, toch is het handig om ze toe te voegen aan LinkedIn. Zo blijf jij op de hoogte van hun activiteiten en zij van de jouwe. Daarnaast krijg je een duidelijker beeld van je tweede- en derdelijnsnetwerk en wordt het makkelijker om met interessante personen in contact te treden. LinkedIn biedt ook de mogelijkheid om je adressenboek te importeren zodat je niet iedereen manueel dient op te zoeken.
+
+
+
+
+
+Connecteer met nieuwe contacten
+
+
+
+
+
+Heb je tijdens een netwerk- of ander evenement interessante mensen ontmoet? Stuur ze dan in de loop van de volgende dagen een connectieverzoek. Op die manier kan je makkelijk contacten onderhouden en kan je interessante personen makkelijker teruggevinden.&nbsp;
+
+
+
+
+
+Je kan ook een bericht toevoegen als je een connectieverzoek stuurt, vertel hierin bijvoorbeeld dat je elkaar hebt ontmoet op event x.
+
+
+
+
+
+Connecteer met mensen die je nog niet kent
+
+
+
+
+
+Social media is geen saleskanaal, dus een rechtstreekse verkoop trachten te forceren of zomaar promotionele boodschappen uitsturen naar bekenden of onbekenden is meestal geen goede tactiek. Wel kan je een connectieverzoek sturen naar mensen die iets voor jou kunnen betekenen of omgekeerd, ook al heb je hen nog niet fysiek ontmoet. Maak in een persoonlijk bericht duidelijk wat de reden van je connectieverzoek is.
+
+
+
+
+
+Ga gericht op zoek
+
+
+
+
+
+LinkedIn biedt de mogelijkheid om gericht te zoeken naar personen met een bepaalde functie in een bepaald bedrijf. Je kan filteren op tal van gegevens en zoeken op trefwoorden. Bij een bezoek aan het gevonden profiel kan je nagaan hoe je met deze persoon verbonden bent en wie eventuele gezamenlijke connecties zijn. Je kan hen inschakelen om je voor te stellen.
+
+
+
+
+
+Integreer LinkedIn in andere software
+
+
+
+
+
+Heel wat (zakelijke) software biedt de mogelijkheid om een koppeling te maken met LinkedIn. Zo kan je bijvoorbeeld je LinkedIn-contacten automatisch integreren in je Outlook-database. Op die manier heb je steeds de meest actuele contactgegevens van je netwerk binnen handbereik. Je kan contacten ook exporteren naar een Excelbestand of csv-file om te importeren in andere software.
+
+
+
+
+
+Converseer in groepen
+
+
+
+
+
+LinkedIn groepen zijn een ideale manier om in contact te komen met personen in een gerelateerde sector of met gemeenschappelijke interesses. Door in een groep een vraag te posten kan je soms duizenden mensen bereiken. Let wel: ook hier is het niet de bedoeling om commerciële boodschappen te verspreiden. De beheerder van de groep kan je bericht verwijderen of je profiel zelfs uitsluiten van de groep indien er van de mogelijkheden misbruik gemaakt wordt.
+
+
+
+
+
+Publiceer blogberichten
+
+
+
+
+
+Naast status posts &#8211; die nog wel in het nieuwsoverzicht maar niet langer op je profiel verschijnen &#8211; kan je ook blogberichten toevoegen aan je LinkedIn-profiel. Deze bijdragen verschijnen in een apart overzicht en zijn aan je profielpagina gekoppeld. Belangstellenden kunnen je LinkedIn-blog volgen en krijgen een melding bij de publicatie van elke nieuwe bijdrage.
+
+    
+
+            [codeToTxtRatio] => Array
+                (
+                    [total_length] => 3558
+                    [text_length] => 3393
+                    [ratio] => 95.362563237774
+                )
+
+            [word_count] => 518
+            [keywords] => Array
+                (
+                    [linkedin] => 8
+                    [personen] => 5
+                    [mensen] => 4
+                    [connectieverzoek] => 4
+                    [contacten] => 4
+                    [zoeken] => 3
+                    [bericht] => 3
+                    [mogelijkheid] => 3
+                    [biedt] => 3
+                    [interessante] => 3
+                    [profiel] => 3
+                    [ideale] => 3
+                    [groep] => 3
+                    [software] => 3
+                    [contact] => 3
+                )
+
+            [longTailKeywords] => Array
+                (
+                    [linkedin] => 8
+                    [personen] => 5
+                    [contacten] => 4
+                    [mensen] => 4
+                    [connectieverzoek] => 4
+                    [ideale] => 3
+                    [contact] => 3
+                    [interessante] => 3
+                    [biedt] => 3
+                    [mogelijkheid] => 3
+                    [zoeken] => 3
+                    [bericht] => 3
+                    [profiel] => 3
+                    [software] => 3
+                    [groep] => 3
+                )
+
+            [headers] => Array
+                (
+                    [h1] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h2] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h3] => Array
+                        (
+                            [count] => 7
+                            [words] => 36
+                            [keywords] => Array
+                                (
+                                    [linkedin] => 2
+                                    [contacten] => 2
+                                    [connecteer] => 2
+                                    [zoek] => 1
+                                    [integreer] => 1
+                                    [voeg] => 1
+                                    [ga] => 1
+                                    [andere] => 1
+                                    [software] => 1
+                                    [converseer] => 1
+                                    [groepen] => 1
+                                    [publiceer] => 1
+                                    [gericht] => 1
+                                    [kent] => 1
+                                    [mensen] => 1
+                                    [nieuwe] => 1
+                                    [toe] => 1
+                                    [offline] => 1
+                                    [online] => 1
+                                    [huidige] => 1
+                                    [blogberichten] => 1
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h4] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h5] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                    [h6] => Array
+                        (
+                            [count] => 0
+                            [words] => 0
+                            [keywords] => Array
+                                (
+                                )
+
+                            [longTailKeywords] => Array
+                                (
+                                )
+
+                        )
+
+                )
+
+            [links] => Array
+                (
+                    [count] => 0
+                    [words] => 0
+                    [keywords] => Array
+                        (
+                        )
+
+                    [longTailKeywords] => Array
+                        (
+                        )
+
+                    [internal] => 0
+                    [external] => 0
+                    [follow] => 0
+                    [nofollow] => 0
+                )
+
+            [images] => Array
+                (
+                    [count] => 0
+                    [count_alt] => 0
+                    [words] => 0
+                    [keywords] => Array
+                        (
+                        )
+
+                    [longTailKeywords] => Array
+                        (
+                        )
+
+                )
+
+        )
+
+)
+
+
+Time: 663 ms, Memory: 8.00MB
+
+OK (1 test, 0 assertions)
