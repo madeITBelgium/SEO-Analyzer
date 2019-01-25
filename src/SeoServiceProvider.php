@@ -3,10 +3,8 @@
 namespace MadeITBelgium\SeoAnalyzer;
 
 use Illuminate\Support\ServiceProvider;
-use MadeITBelgium\SeoAnalyzer\Seo;
 
 /**
- *
  * @version    1.0.0
  *
  * @copyright  Copyright (c) 2018 Made I.T. (http://www.madeit.be)
@@ -18,7 +16,7 @@ class SeoServiceProvider extends ServiceProvider
     protected $defer = false;
 
     protected $rules = [
-        
+
     ];
 
     /**

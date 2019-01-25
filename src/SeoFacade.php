@@ -5,7 +5,6 @@ namespace MadeITBelgium\SeoAnalyzer;
 use Illuminate\Support\Facades\Facade;
 
 /**
- *
  * @version    1.0.0
  *
  * @copyright  Copyright (c) 2018 Made I.T. (http://www.madeit.be)
