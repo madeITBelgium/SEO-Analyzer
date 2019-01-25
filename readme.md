@@ -8,6 +8,32 @@
 
 With this (Laravel) package you can analyze the on-page SEO.
 
+This package search for the main content to optimze the SEO results for the content that matters. Ex.: A blog post webpage analyze full webpage and only the blog post text.
+
+Webpage:
+- Get title
+- Get description
+- Loadtime
+
+Full page analyze
+- code To Text Ratio
+- Word Count
+- Keywords
+- Long tail keywords
+- Headers (H1, H2, ...): Count, word count, keywords, long tail keywords
+- Links: Count, word count, keywords, long tail keywords, internal links, external links, follow, nofollow
+- images: Count, Count with alt text, Count words in alt text, keywords, long tail keywords
+ 
+Detect main content
+- code To Text Ratio
+- Word Count
+- Keywords
+- Long tail keywords
+- Headers (H1, H2, ...): Count, word count, keywords, long tail keywords
+- Links: Count, word count, keywords, long tail keywords, internal links, external links, follow, nofollow
+- images: Count, Count with alt text, Count words in alt text, keywords, long tail keywords
+ 
+
 # Installation
 
 Require this package in your `composer.json` and update composer.
