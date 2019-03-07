@@ -91,13 +91,15 @@ class Seo
         return $this->client;
     }
 
-    public function analyze($url)
+    public function analyze($url, $content = null)
     {
         $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.parse_url($url, PHP_URL_PATH);
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
-
-        $content = $this->getPageContent($url);
+        
+        if($content === null) {
+            $content = $this->getPageContent($url);
+        }
 
         $document = $this->parseHtml($content);
         $nodes = $this->parseHtmlIntoBlocks($document);
