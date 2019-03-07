@@ -96,8 +96,8 @@ class Seo
         $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.parse_url($url, PHP_URL_PATH);
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
-        
-        if($content === null) {
+
+        if ($content === null) {
             $content = $this->getPageContent($url);
         }
 
