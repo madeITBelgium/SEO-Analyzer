@@ -50,6 +50,14 @@ use \MadeITBelgium\SeoAnalyzer\Facade\SEO();
 SEO::analyze('https://www.madeit.be');
 ```
 
+If you already have the HTML content of the page:
+```php
+use \MadeITBelgium\SeoAnalyzer\Facade\SEO();
+$html = "<html>....</html>";
+SEO::analyze('https://www.madeit.be', $html);
+```
+
+
 The complete documentation can be found at: [http://www.madeit.be/](http://www.madeit.be/)
 
 
