@@ -45,14 +45,14 @@ Require this package in your `composer.json` and update composer.
 # Documentation
 ## Usage
 ```php
-use \MadeITBelgium\SeoAnalyzer\Facade\SEO();
+use \MadeITBelgium\SeoAnalyzer\Facade\SEO;
 
 SEO::analyze('https://www.madeit.be');
 ```
 
 If you already have the HTML content of the page:
 ```php
-use \MadeITBelgium\SeoAnalyzer\Facade\SEO();
+use \MadeITBelgium\SeoAnalyzer\Facade\SEO;
 $html = "<html>....</html>";
 SEO::analyze('https://www.madeit.be', $html);
 ```
