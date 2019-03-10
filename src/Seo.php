@@ -97,10 +97,10 @@ class Seo
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
 
-        if($content === null) {
+        if ($content === null) {
             $content = $this->getPageContent($url);
         }
-        
+
         $document = $this->parseHtml($content);
         $nodes = $this->parseHtmlIntoBlocks($document);
 
@@ -115,7 +115,7 @@ class Seo
                 $description = $attributes['content'];
             }
         }
-        
+
         $language = null;
         $htmlNodes = $document->querySelectorAll('html');
         foreach ($htmlNodes as $node) {
@@ -179,13 +179,13 @@ class Seo
 
         $result = [
             'url'         => $url,
-            'canonical'  => $canonical,
+            'canonical'   => $canonical,
             'baseUrl'     => $this->baseUrl,
             'domainUrl'   => $this->domainUrl,
             'domainname'  => $this->domainname,
             'title'       => $title,
             'description' => $description,
-            'language' => $language,
+            'language'    => $language,
             'loadtime'    => $this->loadtime,
             'full_page'   => $fullPageResult,
             'main_text'   => $mainTxtResult,
@@ -266,6 +266,7 @@ class Seo
 
         if ($largestChildNode === false) {
             return $largestNode;
+
             throw new Exception("Can't find main text block.");
         }
 
@@ -425,7 +426,7 @@ class Seo
                 'words'            => count(str_word_count(strtolower($txt), 1)),
                 'keywords'         => $this->findKeywords($txt, 1),
                 'longTailKeywords' => $this->getLongTailKeywords($content, 2, 2),
-                'headers' => $content,
+                'headers'          => $content,
             ];
         }
 
@@ -447,12 +448,12 @@ class Seo
             $attributes = $element->getAttributes();
             if (isset($attributes['href'])) {
                 $url = $this->fixUrl($attributes['href']);
-                
+
                 $link = [
-                    'url' => $url,
+                    'url'      => $url,
                     'internal' => false,
                     'nofollow' => false,
-                    'content' => $this->getTextContent($element->outerHTML),
+                    'content'  => $this->getTextContent($element->outerHTML),
                 ];
                 if ($this->isInternal($url)) {
                     $link['internal'] = true;
@@ -472,7 +473,7 @@ class Seo
                 } else {
                     $follow++;
                 }
-                
+
                 $links[] = $link;
             }
         }
@@ -488,7 +489,7 @@ class Seo
             'external'         => $external,
             'follow'           => $follow,
             'nofollow'         => $nofollow,
-            'links' => $links,
+            'links'            => $links,
         ];
     }
 
@@ -501,15 +502,15 @@ class Seo
         foreach ($elements as $element) {
             $attributes = $element->getAttributes();
             $img = [
-                'src' => $attributes['src'] ?? null,
-                'alt' => $attributes['alt'] ?? null,
+                'src'   => $attributes['src'] ?? null,
+                'alt'   => $attributes['alt'] ?? null,
                 'title' => $attributes['title'] ?? null,
             ];
             if (isset($attributes['alt'])) {
                 $content[] = $this->getTextContent($attributes['alt']);
             }
             $img['src'] = $this->fixUrl($img['src']);
-            
+
             $images[] = $img;
         }
 
@@ -521,7 +522,7 @@ class Seo
             'words'            => count(str_word_count(strtolower($txt), 1)),
             'keywords'         => $this->findKeywords($txt, 1),
             'longTailKeywords' => $this->getLongTailKeywords($content, 2, 2),
-            'images' => $images,
+            'images'           => $images,
         ];
     }
 
@@ -538,8 +539,8 @@ class Seo
         if (strpos($url, '/') === 0) {
             return $this->domainUrl.$url;
         }
-        
-        if(strpos($url, 'data:image') === 0) {
+
+        if (strpos($url, 'data:image') === 0) {
             return $url;
         }
 
