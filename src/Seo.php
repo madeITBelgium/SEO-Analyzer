@@ -97,10 +97,10 @@ class Seo
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
 
-        if ($content === null) {
+        if($content === null) {
             $content = $this->getPageContent($url);
         }
-
+        
         $document = $this->parseHtml($content);
         $nodes = $this->parseHtmlIntoBlocks($document);
 
@@ -115,13 +115,22 @@ class Seo
                 $description = $attributes['content'];
             }
         }
+        
+        $language = null;
+        $htmlNodes = $document->querySelectorAll('html');
+        foreach ($htmlNodes as $node) {
+            $attributes = $node->getAttributes();
+            if (isset($attributes['lang'])) {
+                $language = $attributes['lang'];
+            }
+        }
 
-        $cannonical = '';
+        $canonical = '';
         $linkNodes = $document->querySelectorAll('link');
         foreach ($linkNodes as $node) {
             $attributes = $node->getAttributes();
             if (isset($attributes['rel']) && isset($attributes['href']) && $attributes['rel'] === 'canonical') {
-                $cannonical = $attributes['href'];
+                $canonical = $attributes['href'];
             }
         }
 
@@ -170,12 +179,13 @@ class Seo
 
         $result = [
             'url'         => $url,
-            'cannonical'  => $cannonical,
+            'canonical'  => $canonical,
             'baseUrl'     => $this->baseUrl,
             'domainUrl'   => $this->domainUrl,
             'domainname'  => $this->domainname,
             'title'       => $title,
             'description' => $description,
+            'language' => $language,
             'loadtime'    => $this->loadtime,
             'full_page'   => $fullPageResult,
             'main_text'   => $mainTxtResult,
@@ -255,7 +265,8 @@ class Seo
         $largestChildNode = $this->findLargestChildNode($largestNode['childs'], $largestTxtLength);
 
         if ($largestChildNode === false) {
-            throw Exception("Can't find main text block.");
+            return $largestNode;
+            throw new Exception("Can't find main text block.");
         }
 
         return $largestChildNode;
@@ -414,6 +425,7 @@ class Seo
                 'words'            => count(str_word_count(strtolower($txt), 1)),
                 'keywords'         => $this->findKeywords($txt, 1),
                 'longTailKeywords' => $this->getLongTailKeywords($content, 2, 2),
+                'headers' => $content,
             ];
         }
 
@@ -429,19 +441,30 @@ class Seo
         $nofollow = 0;
 
         $content = [];
+        $links = [];
         foreach ($elements as $element) {
             $content[] = $this->getTextContent($element->outerHTML);
             $attributes = $element->getAttributes();
             if (isset($attributes['href'])) {
                 $url = $this->fixUrl($attributes['href']);
+                
+                $link = [
+                    'url' => $url,
+                    'internal' => false,
+                    'nofollow' => false,
+                    'content' => $this->getTextContent($element->outerHTML),
+                ];
                 if ($this->isInternal($url)) {
+                    $link['internal'] = true;
                     $internal++;
                 } else {
+                    $link['internal'] = false;
                     $external++;
                 }
 
                 if (isset($attributes['rel'])) {
                     if (strpos($attributes['rel'], 'nofollow') >= 0) {
+                        $link['nofollow'] = true;
                         $nofollow++;
                     } else {
                         $follow++;
@@ -449,6 +472,8 @@ class Seo
                 } else {
                     $follow++;
                 }
+                
+                $links[] = $link;
             }
         }
 
@@ -463,6 +488,7 @@ class Seo
             'external'         => $external,
             'follow'           => $follow,
             'nofollow'         => $nofollow,
+            'links' => $links,
         ];
     }
 
@@ -471,11 +497,20 @@ class Seo
         $elements = $document->querySelectorAll('img');
 
         $content = [];
+        $images = [];
         foreach ($elements as $element) {
             $attributes = $element->getAttributes();
+            $img = [
+                'src' => $attributes['src'] ?? null,
+                'alt' => $attributes['alt'] ?? null,
+                'title' => $attributes['title'] ?? null,
+            ];
             if (isset($attributes['alt'])) {
                 $content[] = $this->getTextContent($attributes['alt']);
             }
+            $img['src'] = $this->fixUrl($img['src']);
+            
+            $images[] = $img;
         }
 
         $txt = implode(' ', $content);
@@ -486,6 +521,7 @@ class Seo
             'words'            => count(str_word_count(strtolower($txt), 1)),
             'keywords'         => $this->findKeywords($txt, 1),
             'longTailKeywords' => $this->getLongTailKeywords($content, 2, 2),
+            'images' => $images,
         ];
     }
 
@@ -501,6 +537,10 @@ class Seo
 
         if (strpos($url, '/') === 0) {
             return $this->domainUrl.$url;
+        }
+        
+        if(strpos($url, 'data:image') === 0) {
+            return $url;
         }
 
         return $this->baseUrl.$url;
