@@ -93,10 +93,10 @@ class Seo
 
     public function analyze($url, $content = null)
     {
-        $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.parse_url($url, PHP_URL_PATH);
+        $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.ltrim(parse_url($url, PHP_URL_PATH), '/');
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
-
+        
         if ($content === null) {
             $content = $this->getPageContent($url);
         }
@@ -105,7 +105,10 @@ class Seo
         $nodes = $this->parseHtmlIntoBlocks($document);
 
         $titleNode = $document->querySelector('title');
-        $title = $this->getTextContent($titleNode->outerHTML);
+        $title = null;
+        if($titleNode !== null) {
+            $title = $this->getTextContent($titleNode->outerHTML);
+        }
 
         $description = '';
         $metaNodes = $document->querySelectorAll('meta');
@@ -138,7 +141,10 @@ class Seo
         $usableSource = $content;
         $usableText = $this->getTextContent($usableSource);
 
-        $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
+        $htmlTxtRatio = 0;
+        if(strlen($usableSource) > 0) {
+            $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
+        }
 
         $fullPageResult = [
             'codeToTxtRatio' => [
@@ -154,13 +160,35 @@ class Seo
             'images'           => $this->doImageResult($document),
         ];
 
-        //Usaable Node result
-        $node = $this->getWebsiteUsabelNode($nodes);
+        //Usable Node result
+        if($nodes !== null) {
+            $node = $this->getWebsiteUsabelNode($nodes);
+            if(!isset($node['node'])) {
+                throw new \Exception($url);
+            }
+            $node = $node['node'];
+            $usableSource = $node->outerHTML;
+            $usableText = $this->getTextContent($usableSource);
+        }
+        else {
+            $node = $document->querySelector('body');
+            if($node === null) {
+                $node = $document->querySelector('html');
+            }
+            if($node !== null) {
+                $usableSource = $node->outerHTML;
+                $usableText = $this->getTextContent($usableSource);
+            }
+            else {
+                $usableSource = "";
+                $usableText = "";
+            }
+        }
 
-        $usableSource = $node['node']->outerHTML;
-        $usableText = $this->getTextContent($usableSource);
-
-        $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
+        $htmlTxtRatio = 0;
+        if(strlen($usableSource) > 0) {
+            $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
+        }
 
         $mainTxtResult = [
             'text'           => $usableText,
@@ -172,9 +200,9 @@ class Seo
             'word_count'       => $this->countWords($usableText),
             'keywords'         => $this->findKeywords($usableText),
             'longTailKeywords' => $this->getLongTailKeywords($usableText),
-            'headers'          => $this->doHeaderResult($node['node']),
-            'links'            => $this->doLinkResult($node['node']),
-            'images'           => $this->doImageResult($node['node']),
+            'headers'          => $node !== null ? $this->doHeaderResult($node) : null,
+            'links'            => $node !== null ? $this->doLinkResult($node) : null,
+            'images'           => $node !== null ? $this->doImageResult($node) : null,
         ];
 
         $result = [
@@ -261,7 +289,10 @@ class Seo
                 $largestNode = $node;
             }
         }
-
+        
+        if($largestNode === null) {
+            return $nodes;
+        }
         $largestChildNode = $this->findLargestChildNode($largestNode['childs'], $largestTxtLength);
 
         if ($largestChildNode === false) {
@@ -292,6 +323,9 @@ class Seo
 
     private function loadChilds($node)
     {
+        if($node === null) {
+            return null;
+        }
         $parentTagName = $node->tagName;
         $parentToken = md5($node->outerHTML);
         $qry = $node->querySelectorAll('*');
@@ -528,6 +562,16 @@ class Seo
 
     private function fixUrl($url)
     {
+        $url = str_replace('\\?', '?', $url);
+        $url = str_replace('\\&', '&', $url);
+        $url = str_replace('\\#', '#', $url);
+        $url = str_replace('\\~', '~', $url);
+        $url = str_replace('\\;', ';', $url);
+        
+        if(strpos($url, '#') !== false) {
+            $url = substr($url, 0, strpos($url, '#'));
+        }
+        
         if (strpos($url, 'http://') === 0) {
             return $url;
         }
@@ -537,14 +581,22 @@ class Seo
         }
 
         if (strpos($url, '/') === 0) {
-            return $this->domainUrl.$url;
+            return rtrim($this->domainUrl, '/') .'/' . ltrim($url, '/');
         }
 
         if (strpos($url, 'data:image') === 0) {
             return $url;
         }
-
-        return $this->baseUrl.$url;
+        
+        if (strpos($url, 'tel') === 0) {
+            return $url;
+        }
+        
+        if (strpos($url, 'mailto') === 0) {
+            return $url;
+        }
+        
+        return rtrim($this->baseUrl, '/') . '/' . ltrim($url, '/');
     }
 
     private function isInternal($url)
