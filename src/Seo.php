@@ -96,7 +96,7 @@ class Seo
         $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.ltrim(parse_url($url, PHP_URL_PATH), '/');
         $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
         $this->domainname = parse_url($url, PHP_URL_HOST);
-        
+
         if ($content === null) {
             $content = $this->getPageContent($url);
         }
@@ -106,7 +106,7 @@ class Seo
 
         $titleNode = $document->querySelector('title');
         $title = null;
-        if($titleNode !== null) {
+        if ($titleNode !== null) {
             $title = $this->getTextContent($titleNode->outerHTML);
         }
 
@@ -142,7 +142,7 @@ class Seo
         $usableText = $this->getTextContent($usableSource);
 
         $htmlTxtRatio = 0;
-        if(strlen($usableSource) > 0) {
+        if (strlen($usableSource) > 0) {
             $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
         }
 
@@ -161,32 +161,30 @@ class Seo
         ];
 
         //Usable Node result
-        if($nodes !== null) {
+        if ($nodes !== null) {
             $node = $this->getWebsiteUsabelNode($nodes);
-            if(!isset($node['node'])) {
+            if (!isset($node['node'])) {
                 throw new \Exception($url);
             }
             $node = $node['node'];
             $usableSource = $node->outerHTML;
             $usableText = $this->getTextContent($usableSource);
-        }
-        else {
+        } else {
             $node = $document->querySelector('body');
-            if($node === null) {
+            if ($node === null) {
                 $node = $document->querySelector('html');
             }
-            if($node !== null) {
+            if ($node !== null) {
                 $usableSource = $node->outerHTML;
                 $usableText = $this->getTextContent($usableSource);
-            }
-            else {
-                $usableSource = "";
-                $usableText = "";
+            } else {
+                $usableSource = '';
+                $usableText = '';
             }
         }
 
         $htmlTxtRatio = 0;
-        if(strlen($usableSource) > 0) {
+        if (strlen($usableSource) > 0) {
             $htmlTxtRatio = strlen($usableText) / strlen($usableSource) * 100;
         }
 
@@ -289,8 +287,8 @@ class Seo
                 $largestNode = $node;
             }
         }
-        
-        if($largestNode === null) {
+
+        if ($largestNode === null) {
             return $nodes;
         }
         $largestChildNode = $this->findLargestChildNode($largestNode['childs'], $largestTxtLength);
@@ -323,8 +321,8 @@ class Seo
 
     private function loadChilds($node)
     {
-        if($node === null) {
-            return null;
+        if ($node === null) {
+            return;
         }
         $parentTagName = $node->tagName;
         $parentToken = md5($node->outerHTML);
@@ -567,11 +565,11 @@ class Seo
         $url = str_replace('\\#', '#', $url);
         $url = str_replace('\\~', '~', $url);
         $url = str_replace('\\;', ';', $url);
-        
-        if(strpos($url, '#') !== false) {
+
+        if (strpos($url, '#') !== false) {
             $url = substr($url, 0, strpos($url, '#'));
         }
-        
+
         if (strpos($url, 'http://') === 0) {
             return $url;
         }
@@ -581,22 +579,22 @@ class Seo
         }
 
         if (strpos($url, '/') === 0) {
-            return rtrim($this->domainUrl, '/') .'/' . ltrim($url, '/');
+            return rtrim($this->domainUrl, '/').'/'.ltrim($url, '/');
         }
 
         if (strpos($url, 'data:image') === 0) {
             return $url;
         }
-        
+
         if (strpos($url, 'tel') === 0) {
             return $url;
         }
-        
+
         if (strpos($url, 'mailto') === 0) {
             return $url;
         }
-        
-        return rtrim($this->baseUrl, '/') . '/' . ltrim($url, '/');
+
+        return rtrim($this->baseUrl, '/').'/'.ltrim($url, '/');
     }
 
     private function isInternal($url)
