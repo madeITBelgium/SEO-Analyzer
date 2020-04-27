@@ -65,6 +65,7 @@ class Seo
     private $domainUrl;
     private $domainname;
     private $loadtime = 0;
+    private $language = null;
 
     public function __construct($client = null)
     {
@@ -119,12 +120,11 @@ class Seo
             }
         }
 
-        $language = null;
         $htmlNodes = $document->querySelectorAll('html');
         foreach ($htmlNodes as $node) {
             $attributes = $node->getAttributes();
             if (isset($attributes['lang'])) {
-                $language = $attributes['lang'];
+                $this->language = $attributes['lang'];
             }
         }
 
@@ -211,7 +211,7 @@ class Seo
             'domainname'  => $this->domainname,
             'title'       => $title,
             'description' => $description,
-            'language'    => $language,
+            'language'    => $this->language,
             'loadtime'    => $this->loadtime,
             'full_page'   => $fullPageResult,
             'main_text'   => $mainTxtResult,
@@ -384,7 +384,11 @@ class Seo
 
     private function findKeywords($content, $min = 3)
     {
-        $words = str_word_count(strtolower($content), 1);
+        if ($this->language == "fa-IR") {
+            $words = $this->mb_str_word_count($content, 1);
+        } else
+            $words = str_word_count(strtolower($content), 1);
+
         $word_count = array_count_values($words);
         arsort($word_count);
 
@@ -604,5 +608,29 @@ class Seo
         }
 
         return false;
+    }
+
+    private function mb_str_word_count($string, $format = 0)
+    {
+
+        mb_internal_encoding('UTF-8');
+        mb_regex_encoding('UTF-8');
+
+        $string = str_replace(["\n", "\r"], "", $string);
+        $words = array_filter(mb_split('[^\x{0600}-\x{06FF}]', $string));
+
+        switch ($format) {
+            case 0:
+                return count($words);
+                break;
+            case 1:
+            case 2:
+                return $words;
+                break;
+            default:
+                return $words;
+                break;
+        }
+
     }
 }
