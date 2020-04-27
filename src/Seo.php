@@ -618,7 +618,7 @@ class Seo
         mb_internal_encoding('UTF-8');
         mb_regex_encoding('UTF-8');
 
-        $string = str_replace(["\n", "\r"], "", $string);
+        $string = str_replace(["\n", "\r"], '', $string);
         $words = array_filter(mb_split('[^\x{0600}-\x{06FF}]', $string));
 
         switch ($format) {
