@@ -614,7 +614,6 @@ class Seo
 
     private function mb_str_word_count($string, $format = 0)
     {
-
         mb_internal_encoding('UTF-8');
         mb_regex_encoding('UTF-8');
 
@@ -633,6 +632,5 @@ class Seo
                 return $words;
                 break;
         }
-
     }
 }
