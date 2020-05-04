@@ -637,6 +637,7 @@ class Seo
         $words = array_map(function ($word) {
             $word = trim($word);
             $word = $this->convertNumbers($word);
+
             return !($word == '' || is_numeric($word)) ? $word : null;
         }, $words);
 
@@ -644,13 +645,14 @@ class Seo
     }
 
     /**
-     * Converts non-english numbers to english numbers
+     * Converts non-english numbers to english numbers.
      *
      * @param $string
+     *
      * @return string
      */
     private function convertNumbers($string)
     {
-        return strtr($string, array('۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9'));
+        return strtr($string, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']);
     }
 }
