@@ -39,7 +39,7 @@ Detect main content
 Require this package in your `composer.json` and update composer.
 
 ```php
-"madeitbelgium/seo-analyzer": "~1.0"
+"madeitbelgium/seo-analyzer": "^0.4"
 ```
 
 # Documentation
