@@ -4,7 +4,7 @@ use MadeITBelgium\SeoAnalyzer\Seo;
 
 class SeoTest extends \PHPUnit\Framework\TestCase
 {
-    public function setUp()
+    public function setUp(): void
     {
         parent::setUp();
     }
