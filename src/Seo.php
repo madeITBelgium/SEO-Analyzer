@@ -181,15 +181,19 @@ class Seo
         ];
 
         //Usable Node result
+        $node = null;
         if ($nodes !== null) {
             $node = $this->getWebsiteUsabelNode($nodes);
-            if (!isset($node['node'])) {
-                throw new \Exception($url);
+            if (isset($node['node'])) {
+                $node = $node['node'];
+                $usableSource = $node->outerHTML;
+                $usableText = $this->getTextContent($usableSource);
+            } else {
+                $node = null;
             }
-            $node = $node['node'];
-            $usableSource = $node->outerHTML;
-            $usableText = $this->getTextContent($usableSource);
-        } else {
+        }
+        
+        if(empty($node)) {
             $node = $document->querySelector('body');
             if ($node === null) {
                 $node = $document->querySelector('html');
