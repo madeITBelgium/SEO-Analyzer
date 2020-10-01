@@ -192,8 +192,8 @@ class Seo
                 $node = null;
             }
         }
-        
-        if(empty($node)) {
+
+        if (empty($node)) {
             $node = $document->querySelector('body');
             if ($node === null) {
                 $node = $document->querySelector('html');
