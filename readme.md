@@ -57,7 +57,6 @@ $html = "<html>....</html>";
 SEO::analyze('https://www.madeit.be', $html);
 ```
 
-
 The complete documentation can be found at: [http://www.madeit.be/](http://www.madeit.be/)
 
 
