@@ -1,8 +1,5 @@
 language: php
-
-php: 
-  - 7.2
-  - 7.3
+php:
   - 7.4
 #  - nightly
 
@@ -13,7 +10,8 @@ cache:
    - vendor
 
 install:
-- travis_retry composer install --no-interaction --prefer-source
+- composer require phpunit/phpunit:8.* php-coveralls/php-coveralls:2.*
+- composer install --dev
 
 script:
 - ./vendor/bin/phpunit --coverage-clover tests/logs/clover.xml
