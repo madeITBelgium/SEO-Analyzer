@@ -419,11 +419,7 @@ class Seo
 
     private function findKeywords($content, $min = 3)
     {
-        if ($this->language == 'fa-IR') {
-            $words = $this->mb_str_word_count($content, 1);
-        } else {
-            $words = str_word_count(strtolower($content), 1);
-        }
+        $words = $this->str_word_count($content);
 
         $word_count = array_count_values($words);
         arsort($word_count);
@@ -646,25 +642,31 @@ class Seo
         return false;
     }
 
-    private function mb_str_word_count($string, $format = 0)
+    private function str_word_count($string)
     {
-        mb_internal_encoding('UTF-8');
-        mb_regex_encoding('UTF-8');
-
         $string = str_replace(["\n", "\r"], '', $string);
-        $words = array_filter(mb_split('[^\x{0600}-\x{06FF}]', $string));
 
-        switch ($format) {
-            case 0:
-                return count($words);
-                break;
-            case 1:
-            case 2:
-                return $words;
-                break;
-            default:
-                return $words;
-                break;
-        }
+        $words = preg_split('~[\p{Z}\p{P}]+~u', mb_strtolower($string), null, PREG_SPLIT_NO_EMPTY);
+
+        $words = array_map(function ($word) {
+            $word = trim($word);
+            $word = $this->convertNumbers($word);
+
+            return !($word == '' || is_numeric($word)) ? $word : null;
+        }, $words);
+
+        return array_filter($words);
+    }
+
+    /**
+     * Converts non-english numbers to english numbers.
+     *
+     * @param $string
+     *
+     * @return string
+     */
+    private function convertNumbers($string)
+    {
+        return strtr($string, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']);
     }
 }
