@@ -111,12 +111,12 @@ class Seo
     {
         return $this->client;
     }
-    
+
     public function addStopWords($words)
     {
         $this->stopWords = array_merge($this->stopWords, $words);
     }
-    
+
     public function setStopWords($words)
     {
         $this->stopWords = $words;
