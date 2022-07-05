@@ -669,24 +669,26 @@ class Seo
     {
         return strtr($string, ['۰' => '0', '۱' => '1', '۲' => '2', '۳' => '3', '۴' => '4', '۵' => '5', '۶' => '6', '۷' => '7', '۸' => '8', '۹' => '9']);
     }
-    
-    /** Build a URL
+
+    /**
+     * Build a URL.
      *
      * @param array $parts An array that follows the parse_url scheme
+     *
      * @return string
      */
-    function build_url($parts)
+    public function build_url($parts)
     {
         if (empty($parts['user'])) {
-            $url = $parts['scheme'] . '://' . $parts['host'];
-        } elseif(empty($parts['pass'])) {
-            $url = $parts['scheme'] . '://' . $parts['user'] . '@' . $parts['host'];
+            $url = $parts['scheme'].'://'.$parts['host'];
+        } elseif (empty($parts['pass'])) {
+            $url = $parts['scheme'].'://'.$parts['user'].'@'.$parts['host'];
         } else {
-            $url = $parts['scheme'] . '://' . $parts['user'] . ':' . $parts['pass'] . '@' . $parts['host'];
+            $url = $parts['scheme'].'://'.$parts['user'].':'.$parts['pass'].'@'.$parts['host'];
         }
 
         if (!empty($parts['port'])) {
-            $url .= ':' . $parts['port'];
+            $url .= ':'.$parts['port'];
         }
 
         if (!empty($parts['path'])) {
@@ -694,27 +696,29 @@ class Seo
         }
 
         if (!empty($parts['query'])) {
-            $url .= '?' . $parts['query'];
+            $url .= '?'.$parts['query'];
         }
 
         if (!empty($parts['fragment'])) {
-            return $url . '#' . $parts['fragment'];
+            return $url.'#'.$parts['fragment'];
         }
 
         return $url;
     }
 
-    /** Convert a relative path in to an absolute path
+    /**
+     * Convert a relative path in to an absolute path.
      *
      * @param string $path
+     *
      * @return string
      */
-    function abs_path($path)
+    public function abs_path($path)
     {
         $path_array = explode('/', $path);
 
         // Solve current and parent folder navigation
-        $translated_path_array = array();
+        $translated_path_array = [];
         $i = 0;
         foreach ($path_array as $name) {
             if ($name === '..') {
@@ -724,16 +728,18 @@ class Seo
             }
         }
 
-        return '/' . implode('/', $translated_path_array);
+        return '/'.implode('/', $translated_path_array);
     }
 
-    /** Convert a relative URL in to an absolute URL
+    /**
+     * Convert a relative URL in to an absolute URL.
      *
-     * @param string $url URL or URI
+     * @param string $url  URL or URI
      * @param string $base Absolute URL
+     *
      * @return string
      */
-    function abs_url($url, $base)
+    public function abs_url($url, $base)
     {
         $url_parts = parse_url($url);
         $base_parts = parse_url($base);
@@ -743,9 +749,9 @@ class Seo
             // Is the path relative
             if (substr($url_parts['path'], 0, 1) !== '/') {
                 if (substr($base_parts['path'], -1) === '/') {
-                    $url_parts['path'] = $base_parts['path'] . $url_parts['path'];
+                    $url_parts['path'] = $base_parts['path'].$url_parts['path'];
                 } else {
-                    $url_parts['path'] = dirname($base_parts['path']) . '/' . $url_parts['path'];
+                    $url_parts['path'] = dirname($base_parts['path']).'/'.$url_parts['path'];
                 }
             }
 
