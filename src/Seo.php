@@ -748,10 +748,10 @@ class Seo
         if (!empty($url_parts['path'])) {
             // Is the path relative
             if (substr($url_parts['path'], 0, 1) !== '/') {
-                if (substr($base_parts['path'], -1) === '/') {
+                if (isset($base_parts['path']) && substr($base_parts['path'], -1) === '/') {
                     $url_parts['path'] = $base_parts['path'].$url_parts['path'];
                 } else {
-                    $url_parts['path'] = dirname($base_parts['path']).'/'.$url_parts['path'];
+                    $url_parts['path'] = dirname($base_parts['path'] ?? null).'/'.$url_parts['path'];
                 }
             }
 
