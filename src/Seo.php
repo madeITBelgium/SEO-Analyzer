@@ -635,9 +635,10 @@ class Seo
         }
 
         $fixedUrl = $this->abs_url(ltrim($url, '/'), rtrim($this->baseUrl, '/'));
-        if($fixedUrl === false) {
+        if ($fixedUrl === false) {
             $fixedUrl = $url;
         }
+
         return $fixedUrl;
     }
 
@@ -687,7 +688,7 @@ class Seo
      */
     public function build_url($parts)
     {
-        if(isset($parts['scheme']) && !in_array($parts['scheme'], 'http', 'https')) {
+        if (isset($parts['scheme']) && !in_array($parts['scheme'], 'http', 'https')) {
             return false;
         }
 
