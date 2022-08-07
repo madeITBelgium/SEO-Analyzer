@@ -606,31 +606,39 @@ class Seo
             $url = substr($url, 0, strpos($url, '#'));
         }
 
-        if (strpos($url, 'http://') === 0) {
+        if (strpos(strtolower($url), 'http://') === 0) {
             return $url;
         }
 
-        if (strpos($url, 'https://') === 0) {
+        if (strpos(strtolower($url), 'https://') === 0) {
             return $url;
         }
 
-        if (strpos($url, '/') === 0) {
+        if (strpos(strtolower($url), '/') === 0) {
             return rtrim($this->domainUrl, '/').'/'.ltrim($url, '/');
         }
 
-        if (strpos($url, 'data:image') === 0) {
+        if (strpos(strtolower($url), 'data:image') === 0) {
             return $url;
         }
 
-        if (strpos($url, 'tel') === 0) {
+        if (strpos(strtolower($url), 'tel:') === 0) {
             return $url;
         }
 
-        if (strpos($url, 'mailto') === 0) {
+        if (strpos(strtolower($url), 'mailto:') === 0) {
             return $url;
         }
 
-        return $this->abs_url(ltrim($url, '/'), rtrim($this->baseUrl, '/'));
+        if (strpos(strtolower($url), 'javascript:') === 0) {
+            return $url;
+        }
+
+        $fixedUrl = $this->abs_url(ltrim($url, '/'), rtrim($this->baseUrl, '/'));
+        if($fixedUrl === false) {
+            $fixedUrl = $url;
+        }
+        return $fixedUrl;
     }
 
     private function isInternal($url)
@@ -679,6 +687,10 @@ class Seo
      */
     public function build_url($parts)
     {
+        if(isset($parts['scheme']) && !in_array($parts['scheme'], 'http', 'https')) {
+            return false;
+        }
+
         if (empty($parts['user'])) {
             $url = $parts['scheme'].'://'.$parts['host'];
         } elseif (empty($parts['pass'])) {
@@ -764,7 +776,7 @@ class Seo
             if (!empty($url_parts[$comp])) {
                 break;
             }
-            $url_parts[$comp] = $base_parts[$comp];
+            $url_parts[$comp] = $base_parts[$comp] ?? null;
         }
 
         return $this->build_url($url_parts);
