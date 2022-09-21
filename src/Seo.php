@@ -521,15 +521,15 @@ class Seo
                     continue;
                 }
 
-                $content = trim($this->getTextContent($element->outerHTML));
-                if (empty($content)) {
-                    $content = strpos($content, '<img') !== false ? 'IMAGE' : $content;
+                $linkAnchor = trim($this->getTextContent($element->outerHTML));
+                if(empty($linkAnchor)) {
+                    $linkAnchor = strpos($element->outerHTML, '<img') !== false ? 'image' : $linkAnchor;
                 }
                 $link = [
                     'url'      => $url,
                     'internal' => false,
                     'nofollow' => false,
-                    'content'  => $content,
+                    'content'  => $linkAnchor,
                 ];
                 if ($this->isInternal($url)) {
                     $link['internal'] = true;
