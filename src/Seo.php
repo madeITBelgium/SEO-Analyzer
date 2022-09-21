@@ -521,18 +521,24 @@ class Seo
                     continue;
                 }
 
+                $content = trim($this->getTextContent($element->outerHTML));
+                if(empty($content)) {
+                    $content = strpos($content, '<img') !== false ? 'IMAGE' : $content;
+                }
                 $link = [
                     'url'      => $url,
                     'internal' => false,
                     'nofollow' => false,
-                    'content'  => $this->getTextContent($element->outerHTML),
+                    'content'  => $content,
                 ];
                 if ($this->isInternal($url)) {
                     $link['internal'] = true;
                     $internal++;
                 } else {
                     $link['internal'] = false;
-                    $external++;
+                    if (strpos(strtolower($url), 'tel:') === false && strpos(strtolower($url), 'mailto:') === false) {
+                        $external++;
+                    }
                 }
 
                 if (isset($attributes['rel'])) {
