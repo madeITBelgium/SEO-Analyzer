@@ -522,7 +522,7 @@ class Seo
                 }
 
                 $content = trim($this->getTextContent($element->outerHTML));
-                if(empty($content)) {
+                if (empty($content)) {
                     $content = strpos($content, '<img') !== false ? 'IMAGE' : $content;
                 }
                 $link = [
