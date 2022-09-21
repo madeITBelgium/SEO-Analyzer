@@ -520,7 +520,7 @@ class Seo
                 if (strpos(strtolower($url), 'javascript:') === 0) {
                     continue;
                 }
-                
+
                 $link = [
                     'url'      => $url,
                     'internal' => false,
