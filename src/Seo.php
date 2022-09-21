@@ -517,6 +517,10 @@ class Seo
             if (isset($attributes['href'])) {
                 $url = $this->fixUrl($attributes['href']);
 
+                if (strpos(strtolower($url), 'javascript:') === 0) {
+                    continue;
+                }
+                
                 $link = [
                     'url'      => $url,
                     'internal' => false,
