@@ -580,7 +580,7 @@ class Seo
         foreach ($elements as $element) {
             $attributes = $element->getAttributes();
             $img = [
-                'src'   => $attributes['src'] ?? null,
+                'src'   => $attributes['data-lazy-src'] ?? ($attributes['src'] ?? null),
                 'alt'   => $attributes['alt'] ?? null,
                 'title' => $attributes['title'] ?? null,
             ];
