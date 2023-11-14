@@ -522,7 +522,7 @@ class Seo
                 }
 
                 $linkAnchor = trim($this->getTextContent($element->outerHTML));
-                if(empty($linkAnchor)) {
+                if (empty($linkAnchor)) {
                     $linkAnchor = strpos($element->outerHTML, '<img') !== false ? 'image' : $linkAnchor;
                 }
                 $link = [
