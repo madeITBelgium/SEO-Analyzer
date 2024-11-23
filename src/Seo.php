@@ -224,6 +224,7 @@ class Seo
 
         $mainTxtResult = [
             'text'           => $usableText,
+            'html'           => $usableSource,
             'codeToTxtRatio' => [
                 'total_length' => strlen($usableSource),
                 'text_length'  => strlen($usableText),
