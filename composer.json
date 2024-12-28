@@ -1,5 +1,5 @@
 {
-    "version": "0.8.0",
+    "version": "0.9.0",
     "name": "madeitbelgium/seo-analyzer",
     "description": "SEO Analyzer",
     "keywords": ["SEO", "Analyzer", "onpage", "on page", "on", "page", "seo"],
@@ -14,7 +14,8 @@
         "php": ">=7.0",
         "illuminate/support": "*",
         "guzzlehttp/guzzle": "~6.0|7.*",
-        "ivopetkov/html5-dom-document-php": "1.*|2.*"
+        "ivopetkov/html5-dom-document-php": "1.*|2.*",
+        "league/html-to-markdown": "^5.1"
     },
     "require-dev": {
         "phpunit/phpunit": "7.*|6.*|8.*",
