@@ -6,6 +6,7 @@ use Exception;
 use GuzzleHttp\Client;
 use GuzzleHttp\TransferStats;
 use IvoPetkov\HTML5DOMDocument;
+use League\HTMLToMarkdown\HtmlConverter;
 
 /**
  * @version    1.0.0
@@ -250,6 +251,7 @@ class Seo
             'loadtime'    => $this->loadtime,
             'full_page'   => $fullPageResult,
             'main_text'   => $mainTxtResult,
+            'markdown'    => $this->generateMarkdown($content),
         ];
 
         return $result;
@@ -543,7 +545,7 @@ class Seo
                 }
 
                 if (isset($attributes['rel'])) {
-                    if (strpos($attributes['rel'], 'nofollow') >= 0) {
+                    if (strpos($attributes['rel'], 'nofollow') !== false) {
                         $link['nofollow'] = true;
                         $nofollow++;
                     } else {
@@ -792,5 +794,18 @@ class Seo
         }
 
         return $this->build_url($url_parts);
+    }
+
+    private function generateMarkdown($content)
+    {
+        //remove head from $content
+        $content = preg_replace('/<head>.*?<\/head>/s', '', $content);
+        $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => true));
+        $markdown = $converter->convert($content);
+
+        //remove empty lines
+        $markdown = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $markdown);
+
+        return $markdown;
     }
 }
