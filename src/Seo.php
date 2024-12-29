@@ -800,6 +800,11 @@ class Seo
     {
         //remove head from $content
         $content = preg_replace('/<head>.*?<\/head>/s', '', $content);
+        //strip all inline scripts
+        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
+        //strip all inline styles
+        $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
+        
         $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => true));
         $markdown = $converter->convert($content);
 
