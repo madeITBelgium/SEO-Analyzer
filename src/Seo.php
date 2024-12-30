@@ -804,6 +804,8 @@ class Seo
         $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
         //strip all inline styles
         $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
+        //remove noscript tags
+        $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
         
         $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => true));
         $markdown = $converter->convert($content);
