@@ -806,13 +806,29 @@ class Seo
         $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
         //remove noscript tags
         $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
+
+        //prefer data-lazy-src over src for images
+        $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
+            $imgTag = $matches[0];
+
+            if (!preg_match('/\bdata-lazy-src\s*=\s*(["\"])(.*?)\1/i', $imgTag, $lazyMatch)) {
+                return $imgTag;
+            }
+
+            $lazySrc = $lazyMatch[2];
+
+            if (preg_match('/\bsrc\s*=\s*(["\"])(.*?)\1/i', $imgTag)) {
+                return preg_replace('/\bsrc\s*=\s*(["\"]).*?\1/i', 'src="' . $lazySrc . '"', $imgTag, 1);
+            }
+
+            return preg_replace('/<img\b/i', '<img src="' . $lazySrc . '"', $imgTag, 1);
+        }, $content);
         
-        $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => true));
+        $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => false));
         $markdown = $converter->convert($content);
 
         //remove empty lines
         $markdown = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $markdown);
-
         return $markdown;
     }
 }
