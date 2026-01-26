@@ -818,17 +818,18 @@ class Seo
             $lazySrc = $lazyMatch[2];
 
             if (preg_match('/\bsrc\s*=\s*(["\"])(.*?)\1/i', $imgTag)) {
-                return preg_replace('/\bsrc\s*=\s*(["\"]).*?\1/i', 'src="' . $lazySrc . '"', $imgTag, 1);
+                return preg_replace('/\bsrc\s*=\s*(["\"]).*?\1/i', 'src="'.$lazySrc.'"', $imgTag, 1);
             }
 
-            return preg_replace('/<img\b/i', '<img src="' . $lazySrc . '"', $imgTag, 1);
+            return preg_replace('/<img\b/i', '<img src="'.$lazySrc.'"', $imgTag, 1);
         }, $content);
-        
-        $converter = new HtmlConverter(array('header_style'=>'atx', 'strip_tags' => true, 'hard_break' => false));
+
+        $converter = new HtmlConverter(['header_style'=>'atx', 'strip_tags' => true, 'hard_break' => false]);
         $markdown = $converter->convert($content);
 
         //remove empty lines
         $markdown = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $markdown);
+
         return $markdown;
     }
 }
