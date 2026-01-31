@@ -17,6 +17,8 @@ use League\HTMLToMarkdown\HtmlConverter;
  */
 class Seo
 {
+    private const ALLOWED_SCHEMES = ['http', 'https'];
+
     private $client = null;
     private $stopWords = [
         //NL
@@ -125,9 +127,14 @@ class Seo
 
     public function analyze($url, $content = null)
     {
-        $this->baseUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST).'/'.ltrim(parse_url($url, PHP_URL_PATH), '/');
-        $this->domainUrl = parse_url($url, PHP_URL_SCHEME).'://'.parse_url($url, PHP_URL_HOST);
-        $this->domainname = parse_url($url, PHP_URL_HOST);
+        $parts = is_string($url) ? parse_url($url) : false;
+        $scheme = is_array($parts) ? ($parts['scheme'] ?? null) : null;
+        $host = is_array($parts) ? ($parts['host'] ?? null) : null;
+        $path = is_array($parts) ? ($parts['path'] ?? '') : '';
+
+        $this->baseUrl = ($scheme && $host) ? ($scheme.'://'.$host.'/'.ltrim($path ?? '', '/')) : '';
+        $this->domainUrl = ($scheme && $host) ? ($scheme.'://'.$host) : '';
+        $this->domainname = $host;
 
         if ($content === null) {
             $content = $this->getPageContent($url);
@@ -259,6 +266,16 @@ class Seo
 
     private function getPageContent($url)
     {
+        if (! is_string($url)) {
+            return '';
+        }
+
+        $parts = parse_url($url);
+        $scheme = $parts['scheme'] ?? null;
+        if ($scheme === null || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+            return '';
+        }
+
         $response = $this->client->request('GET', $url, [
             'on_stats' => function (TransferStats $stats) {
                 $this->loadtime = $stats->getTransferTime();
@@ -272,34 +289,38 @@ class Seo
 
     private function getTextContent($text)
     {
-        $text = preg_replace(
-            [
-                // Remove invisible content
-                '@<head[^>]*?>.*?</head>@siu',
-                '@<style[^>]*?>.*?</style>@siu',
-                '@<script[^>]*?.*?</script>@siu',
-                '@<object[^>]*?.*?</object>@siu',
-                '@<embed[^>]*?.*?</embed>@siu',
-                '@<applet[^>]*?.*?</applet>@siu',
-                '@<noframes[^>]*?.*?</noframes>@siu',
-                '@<noscript[^>]*?.*?</noscript>@siu',
-                '@<noembed[^>]*?.*?</noembed>@siu',
+        static $search = [
+            // Remove invisible content
+            '@<head[^>]*?>.*?</head>@siu',
+            '@<style[^>]*?>.*?</style>@siu',
+            '@<script[^>]*?.*?</script>@siu',
+            '@<object[^>]*?.*?</object>@siu',
+            '@<embed[^>]*?.*?</embed>@siu',
+            '@<applet[^>]*?.*?</applet>@siu',
+            '@<noframes[^>]*?.*?</noframes>@siu',
+            '@<noscript[^>]*?.*?</noscript>@siu',
+            '@<noembed[^>]*?.*?</noembed>@siu',
 
-                // Add line breaks before & after blocks
-                '@<((br)|(hr))@iu',
-                '@</?((address)|(blockquote)|(center)|(del))@iu',
-                '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
-                '@</?((dir)|(dl)|(dt)|(dd)|(li)|(menu)|(ol)|(ul))@iu',
-                '@</?((table)|(th)|(td)|(caption))@iu',
-                '@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
-                '@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
-                '@</?((frameset)|(frame)|(iframe))@iu',
-            ],
-            [
-                ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
-                "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
-                "\n\$0", "\n\$0",
-            ],
+            // Add line breaks before & after blocks
+            '@<((br)|(hr))@iu',
+            '@</?((address)|(blockquote)|(center)|(del))@iu',
+            '@</?((div)|(h[1-9])|(ins)|(isindex)|(p)|(pre))@iu',
+            '@</?((dir)|(dl)|(dt)|(dd)|(li)|(menu)|(ol)|(ul))@iu',
+            '@</?((table)|(th)|(td)|(caption))@iu',
+            '@</?((form)|(button)|(fieldset)|(legend)|(input))@iu',
+            '@</?((label)|(select)|(optgroup)|(option)|(textarea))@iu',
+            '@</?((frameset)|(frame)|(iframe))@iu',
+        ];
+
+        static $replace = [
+            ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ', ' ',
+            "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0", "\n\$0",
+            "\n\$0", "\n\$0",
+        ];
+
+        $text = preg_replace(
+            $search,
+            $replace,
             $text
         );
 
@@ -609,6 +630,10 @@ class Seo
 
     private function fixUrl($url)
     {
+        if (! is_string($url) || $url === '') {
+            return $url;
+        }
+
         $url = str_replace('\\?', '?', $url);
         $url = str_replace('\\&', '&', $url);
         $url = str_replace('\\#', '#', $url);
@@ -619,31 +644,33 @@ class Seo
             $url = substr($url, 0, strpos($url, '#'));
         }
 
-        if (strpos(strtolower($url), 'http://') === 0) {
+        $lower = strtolower($url);
+
+        if (strpos($lower, 'http://') === 0) {
             return $url;
         }
 
-        if (strpos(strtolower($url), 'https://') === 0) {
+        if (strpos($lower, 'https://') === 0) {
             return $url;
         }
 
-        if (strpos(strtolower($url), '/') === 0) {
+        if (strpos($lower, '/') === 0) {
             return rtrim($this->domainUrl, '/').'/'.ltrim($url, '/');
         }
 
-        if (strpos(strtolower($url), 'data:image') === 0) {
+        if (strpos($lower, 'data:image') === 0) {
             return $url;
         }
 
-        if (strpos(strtolower($url), 'tel:') === 0) {
+        if (strpos($lower, 'tel:') === 0) {
             return $url;
         }
 
-        if (strpos(strtolower($url), 'mailto:') === 0) {
+        if (strpos($lower, 'mailto:') === 0) {
             return $url;
         }
 
-        if (strpos(strtolower($url), 'javascript:') === 0) {
+        if (strpos($lower, 'javascript:') === 0) {
             return $url;
         }
 
@@ -657,11 +684,18 @@ class Seo
 
     private function isInternal($url)
     {
-        if (strpos($url, $this->domainname) > 0) {
-            return true;
+        if (! is_string($url) || $url === '' || $this->domainname === null) {
+            return false;
         }
 
-        return false;
+        $parts = parse_url($url);
+        $host = $parts['host'] ?? null;
+        if ($host !== null) {
+            return strtolower($host) === strtolower($this->domainname);
+        }
+
+        return stripos($url, (string) $this->domainname) !== false;
+
     }
 
     private function str_word_count($string)
