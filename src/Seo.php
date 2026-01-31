@@ -806,6 +806,8 @@ class Seo
         $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
         //remove noscript tags
         $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
+        //remove script tags
+        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
 
         //prefer data-lazy-src over src for images
         $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
