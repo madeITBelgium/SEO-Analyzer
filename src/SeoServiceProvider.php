@@ -26,9 +26,7 @@ class SeoServiceProvider extends ServiceProvider
      */
     public function boot()
     {
-        $this->publishes([
-            __DIR__.'/config/seo-analyzer.php' => config_path('seo-analyzer.php'),
-        ]);
+        //
     }
 
     /**
