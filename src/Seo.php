@@ -266,13 +266,13 @@ class Seo
 
     private function getPageContent($url)
     {
-        if (! is_string($url)) {
+        if (!is_string($url)) {
             return '';
         }
 
         $parts = parse_url($url);
         $scheme = $parts['scheme'] ?? null;
-        if ($scheme === null || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+        if ($scheme === null || !in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
             return '';
         }
 
@@ -630,7 +630,7 @@ class Seo
 
     private function fixUrl($url)
     {
-        if (! is_string($url) || $url === '') {
+        if (!is_string($url) || $url === '') {
             return $url;
         }
 
@@ -684,7 +684,7 @@ class Seo
 
     private function isInternal($url)
     {
-        if (! is_string($url) || $url === '' || $this->domainname === null) {
+        if (!is_string($url) || $url === '' || $this->domainname === null) {
             return false;
         }
 
@@ -695,7 +695,6 @@ class Seo
         }
 
         return stripos($url, (string) $this->domainname) !== false;
-
     }
 
     private function str_word_count($string)
@@ -910,7 +909,7 @@ class Seo
         $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
 
         $markers = [
-            'end_menu' => '%%END_MENU_MARKER%%',
+            'end_menu'     => '%%END_MENU_MARKER%%',
             'start_footer' => '%%START_FOOTER_MARKER%%',
         ];
 
