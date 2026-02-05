@@ -910,8 +910,8 @@ class Seo
         $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
 
         $markers = [
-            'end_menu' => '%%END_MENU_MARKER%%',
-            'start_footer' => '%%START_FOOTER_MARKER%%',
+            'end_menu' => '@@END-MENU@@',
+            'start_footer' => '@@START-FOOTER@@',
         ];
 
         $content = $this->injectContentMarkers($content, $markers);
@@ -937,8 +937,22 @@ class Seo
         $markdown = $converter->convert($content);
 
         $markdown = str_replace(
-            [$markers['end_menu'], $markers['start_footer']],
-            ["\n<!--end-menu-->\n", "\n<!--start-footer-->\n"],
+            [
+                $markers['end_menu'],
+                $markers['start_footer'],
+                '%%END_MENU_MARKER%%',
+                '%%START_FOOTER_MARKER%%',
+                '%%END\_MENU\_MARKER%%',
+                '%%START\_FOOTER\_MARKER%%',
+            ],
+            [
+                "\n<!--end-menu-->\n",
+                "\n<!--start-footer-->\n",
+                "\n<!--end-menu-->\n",
+                "\n<!--start-footer-->\n",
+                "\n<!--end-menu-->\n",
+                "\n<!--start-footer-->\n",
+            ],
             $markdown
         );
 
