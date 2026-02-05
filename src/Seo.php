@@ -830,6 +830,72 @@ class Seo
         return $this->build_url($url_parts);
     }
 
+    private function findFirstNode($document, array $selectors)
+    {
+        foreach ($selectors as $selector) {
+            $node = $document->querySelector($selector);
+            if ($node !== null) {
+                return $node;
+            }
+        }
+
+        return null;
+    }
+
+    private function insertAfterNode($referenceNode, $newNode): void
+    {
+        if ($referenceNode === null || $referenceNode->parentNode === null) {
+            return;
+        }
+
+        if ($referenceNode->nextSibling !== null) {
+            $referenceNode->parentNode->insertBefore($newNode, $referenceNode->nextSibling);
+
+            return;
+        }
+
+        $referenceNode->parentNode->appendChild($newNode);
+    }
+
+    private function injectContentMarkers(string $content, array $markers): string
+    {
+        try {
+            $document = $this->parseHtml($content);
+        } catch (\Throwable $e) {
+            return $content;
+        }
+
+        $menuNode = $this->findFirstNode($document, [
+            'nav',
+            '[role="navigation"]',
+            '[class*="navbar"]',
+            '[class*="menu"]',
+            '[id*="menu"]',
+            '[class*="nav"]',
+        ]);
+
+        if ($menuNode !== null && strpos($content, $markers['end_menu']) === false) {
+            $menuMarker = $document->createTextNode($markers['end_menu']);
+            $this->insertAfterNode($menuNode, $menuMarker);
+        }
+
+        $footerNode = $this->findFirstNode($document, [
+            'footer',
+            '[role="contentinfo"]',
+            '[class*="footer"]',
+            '[id*="footer"]',
+        ]);
+
+        if ($footerNode !== null && strpos($content, $markers['start_footer']) === false) {
+            $footerMarker = $document->createTextNode($markers['start_footer']);
+            if ($footerNode->parentNode !== null) {
+                $footerNode->parentNode->insertBefore($footerMarker, $footerNode);
+            }
+        }
+
+        return $document->saveHTML();
+    }
+
     private function generateMarkdown($content)
     {
         //remove head from $content
@@ -842,6 +908,13 @@ class Seo
         $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
         //remove script tags
         $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
+
+        $markers = [
+            'end_menu' => '%%END_MENU_MARKER%%',
+            'start_footer' => '%%START_FOOTER_MARKER%%',
+        ];
+
+        $content = $this->injectContentMarkers($content, $markers);
 
         //prefer data-lazy-src over src for images
         $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
@@ -862,6 +935,12 @@ class Seo
 
         $converter = new HtmlConverter(['header_style'=>'atx', 'strip_tags' => true, 'hard_break' => false]);
         $markdown = $converter->convert($content);
+
+        $markdown = str_replace(
+            [$markers['end_menu'], $markers['start_footer']],
+            ["\n<!--end-menu-->\n", "\n<!--start-footer-->\n"],
+            $markdown
+        );
 
         //remove empty lines
         $markdown = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $markdown);
