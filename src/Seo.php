@@ -201,7 +201,7 @@ class Seo
         //Usable Node result
         $node = null;
         if ($nodes !== null) {
-            $node = $this->getWebsiteUsabelNode($nodes);
+            $node = $this->getWebsiteUsabelNode($nodes, $content);
             if (isset($node['node'])) {
                 $node = $node['node'];
                 $usableSource = $node->outerHTML;
@@ -266,13 +266,13 @@ class Seo
 
     private function getPageContent($url)
     {
-        if (!is_string($url)) {
+        if (! is_string($url)) {
             return '';
         }
 
         $parts = parse_url($url);
         $scheme = $parts['scheme'] ?? null;
-        if ($scheme === null || !in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+        if ($scheme === null || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
             return '';
         }
 
@@ -328,11 +328,102 @@ class Seo
         return strip_tags($text);
     }
 
-    private function getWebsiteUsabelNode($nodes)
+    private function getWebsiteUsabelNode($nodes, $content)
     {
+        $node = $this->getBetweenMenuFooterNode($content);
+        if ($node !== null) {
+            return $node;
+        }
+
         $node = $this->findLargestNode($nodes);
 
         return $node;
+    }
+
+    private function getBetweenMenuFooterNode($content)
+    {
+        if (! is_string($content) || $content === '') {
+            return null;
+        }
+
+        try {
+            $document = $this->parseHtml($content);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $menuNode = $this->findFirstNode($document, [
+            'nav',
+            '[role="navigation"]',
+            '[class*="navbar"]',
+            '[class*="menu"]',
+            '[id*="menu"]',
+            '[class*="nav"]',
+        ]);
+
+        $footerNode = $this->findFirstNode($document, [
+            'footer',
+            '[role="contentinfo"]',
+            '[class*="footer"]',
+            '[id*="footer"]',
+        ]);
+
+        if ($menuNode === null || $footerNode === null) {
+            return null;
+        }
+
+        $startMarker = 'seo-main-start';
+        $endMarker = 'seo-main-end';
+        $startComment = $document->createComment($startMarker);
+        $endComment = $document->createComment($endMarker);
+
+        $this->insertAfterNode($menuNode, $startComment);
+        if ($footerNode->parentNode !== null) {
+            $footerNode->parentNode->insertBefore($endComment, $footerNode);
+        }
+
+        $html = $document->saveHTML();
+        $startTag = '<!--'.$startMarker.'-->';
+        $endTag = '<!--'.$endMarker.'-->';
+        $startPos = strpos($html, $startTag);
+        $endPos = strpos($html, $endTag);
+        if ($startPos === false || $endPos === false || $startPos >= $endPos) {
+            return null;
+        }
+
+        $startPos += strlen($startTag);
+        $between = substr($html, $startPos, $endPos - $startPos);
+        if (trim($between) === '') {
+            return null;
+        }
+
+        try {
+            $betweenDocument = $this->parseHtml($between);
+        } catch (\Throwable $e) {
+            return null;
+        }
+
+        $betweenNodes = $this->parseHtmlIntoBlocks($betweenDocument);
+        if ($betweenNodes !== null) {
+            $betweenNode = $this->findLargestNode($betweenNodes);
+            if (is_array($betweenNode) && isset($betweenNode['node'])) {
+                return $betweenNode;
+            }
+        }
+
+        $fallbackNode = $betweenDocument->querySelector('body');
+        if ($fallbackNode === null) {
+            $fallbackNode = $betweenDocument->querySelector('html');
+        }
+
+        if ($fallbackNode !== null) {
+            return [
+                'node' => $fallbackNode,
+                'childs' => [],
+            ];
+        }
+
+        return null;
     }
 
     private function findLargestNode($nodes)
@@ -630,7 +721,7 @@ class Seo
 
     private function fixUrl($url)
     {
-        if (!is_string($url) || $url === '') {
+        if (! is_string($url) || $url === '') {
             return $url;
         }
 
@@ -684,7 +775,7 @@ class Seo
 
     private function isInternal($url)
     {
-        if (!is_string($url) || $url === '' || $this->domainname === null) {
+        if (! is_string($url) || $url === '' || $this->domainname === null) {
             return false;
         }
 
@@ -695,6 +786,7 @@ class Seo
         }
 
         return stripos($url, (string) $this->domainname) !== false;
+
     }
 
     private function str_word_count($string)
@@ -909,7 +1001,7 @@ class Seo
         $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
 
         $markers = [
-            'end_menu'     => '@@END-MENU@@',
+            'end_menu' => '@@END-MENU@@',
             'start_footer' => '@@START-FOOTER@@',
         ];
 
