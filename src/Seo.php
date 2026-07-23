@@ -200,11 +200,27 @@ class Seo
 
         //Usable Node result
         $node = null;
-        if ($nodes !== null) {
-            $node = $this->getWebsiteUsabelNode($nodes, $content);
+
+        // Prefer the content between menu and footer when both can be detected.
+        $betweenMenuFooterHtml = $this->getBetweenMenuFooterHtml($content);
+        if ($betweenMenuFooterHtml !== null) {
+            $usableSource = $betweenMenuFooterHtml;
+            $usableText = $this->getTextContent($usableSource);
+
+            try {
+                $betweenDocument = $this->parseHtml($usableSource);
+                $node = $betweenDocument->querySelector('body');
+                if ($node === null) {
+                    $node = $betweenDocument->querySelector('html');
+                }
+            } catch (\Throwable $e) {
+                $node = null;
+            }
+        } elseif ($nodes !== null) {
+            $node = $this->findLargestNode($nodes);
             if (isset($node['node'])) {
                 $node = $node['node'];
-                $usableSource = $node->outerHTML;
+                $usableSource = $this->getNodeHtml($node);
                 $usableText = $this->getTextContent($usableSource);
             } else {
                 $node = null;
@@ -217,7 +233,7 @@ class Seo
                 $node = $document->querySelector('html');
             }
             if ($node !== null) {
-                $usableSource = $node->outerHTML;
+                $usableSource = $this->getNodeHtml($node);
                 $usableText = $this->getTextContent($usableSource);
             } else {
                 $usableSource = '';
@@ -342,58 +358,8 @@ class Seo
 
     private function getBetweenMenuFooterNode($content)
     {
-        if (! is_string($content) || $content === '') {
-            return null;
-        }
-
-        try {
-            $document = $this->parseHtml($content);
-        } catch (\Throwable $e) {
-            return null;
-        }
-
-        $menuNode = $this->findFirstNode($document, [
-            'nav',
-            '[role="navigation"]',
-            '[class*="navbar"]',
-            '[class*="menu"]',
-            '[id*="menu"]',
-            '[class*="nav"]',
-        ]);
-
-        $footerNode = $this->findFirstNode($document, [
-            'footer',
-            '[role="contentinfo"]',
-            '[class*="footer"]',
-            '[id*="footer"]',
-        ]);
-
-        if ($menuNode === null || $footerNode === null) {
-            return null;
-        }
-
-        $startMarker = 'seo-main-start';
-        $endMarker = 'seo-main-end';
-        $startComment = $document->createComment($startMarker);
-        $endComment = $document->createComment($endMarker);
-
-        $this->insertAfterNode($menuNode, $startComment);
-        if ($footerNode->parentNode !== null) {
-            $footerNode->parentNode->insertBefore($endComment, $footerNode);
-        }
-
-        $html = $document->saveHTML();
-        $startTag = '<!--'.$startMarker.'-->';
-        $endTag = '<!--'.$endMarker.'-->';
-        $startPos = strpos($html, $startTag);
-        $endPos = strpos($html, $endTag);
-        if ($startPos === false || $endPos === false || $startPos >= $endPos) {
-            return null;
-        }
-
-        $startPos += strlen($startTag);
-        $between = substr($html, $startPos, $endPos - $startPos);
-        if (trim($between) === '') {
+        $between = $this->getBetweenMenuFooterHtml($content);
+        if ($between === null) {
             return null;
         }
 
@@ -403,27 +369,63 @@ class Seo
             return null;
         }
 
-        $betweenNodes = $this->parseHtmlIntoBlocks($betweenDocument);
-        if ($betweenNodes !== null) {
-            $betweenNode = $this->findLargestNode($betweenNodes);
-            if (is_array($betweenNode) && isset($betweenNode['node'])) {
-                return $betweenNode;
-            }
+        $betweenNode = $betweenDocument->querySelector('body');
+        if ($betweenNode === null) {
+            $betweenNode = $betweenDocument->querySelector('html');
         }
 
-        $fallbackNode = $betweenDocument->querySelector('body');
-        if ($fallbackNode === null) {
-            $fallbackNode = $betweenDocument->querySelector('html');
+        if ($betweenNode === null) {
+            return null;
         }
 
-        if ($fallbackNode !== null) {
-            return [
-                'node' => $fallbackNode,
-                'childs' => [],
-            ];
+        return [
+            'node' => $betweenNode,
+            'childs' => [],
+        ];
+    }
+
+    private function getBetweenMenuFooterHtml($content)
+    {
+        if (! is_string($content) || $content === '') {
+            return null;
         }
 
-        return null;
+        $markers = [
+            'end_menu' => '@@END-MENU@@',
+            'start_footer' => '@@START-FOOTER@@',
+        ];
+
+        $preparedContent = $this->prepareContentForMenuFooterExtraction($content);
+        $markedContent = $this->injectContentMarkers($preparedContent, $markers);
+        $startPos = strpos($markedContent, $markers['end_menu']);
+        $endPos = strpos($markedContent, $markers['start_footer']);
+
+        if ($startPos === false || $endPos === false || $startPos >= $endPos) {
+            return null;
+        }
+
+        $startPos += strlen($markers['end_menu']);
+        $between = substr($markedContent, $startPos, $endPos - $startPos);
+
+        if (! is_string($between) || trim(strip_tags($between)) === '') {
+            return null;
+        }
+
+        return $between;
+    }
+
+    private function getNodeHtml($node)
+    {
+        if ($node === null || ! isset($node->tagName)) {
+            return '';
+        }
+
+        $tagName = strtolower((string) $node->tagName);
+        if (in_array($tagName, ['body', 'html'], true) && isset($node->innerHTML)) {
+            return $node->innerHTML;
+        }
+
+        return $node->outerHTML;
     }
 
     private function findLargestNode($nodes)
@@ -987,18 +989,37 @@ class Seo
         return $document->saveHTML();
     }
 
+    private function prepareContentForMenuFooterExtraction(string $content): string
+    {
+        // Keep preprocessing identical for markdown and HTML main-content extraction.
+        $content = preg_replace('/<head>.*?<\/head>/s', '', $content);
+        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
+        $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
+        $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
+
+        // Prefer lazy-loaded image source when available.
+        $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
+            $imgTag = $matches[0];
+
+            if (!preg_match('/\bdata-lazy-src\s*=\s*(["\'])(.*?)\1/i', $imgTag, $lazyMatch)) {
+                return $imgTag;
+            }
+
+            $lazySrc = $lazyMatch[2];
+
+            if (preg_match('/\bsrc\s*=\s*(["\'])(.*?)\1/i', $imgTag)) {
+                return preg_replace('/\bsrc\s*=\s*(["\']).*?\1/i', 'src="'.$lazySrc.'"', $imgTag, 1);
+            }
+
+            return preg_replace('/<img\b/i', '<img src="'.$lazySrc.'"', $imgTag, 1);
+        }, $content);
+
+        return $content;
+    }
+
     private function generateMarkdown($content)
     {
-        //remove head from $content
-        $content = preg_replace('/<head>.*?<\/head>/s', '', $content);
-        //strip all inline scripts
-        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
-        //strip all inline styles
-        $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
-        //remove noscript tags
-        $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
-        //remove script tags
-        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
+        $content = $this->prepareContentForMenuFooterExtraction($content);
 
         $markers = [
             'end_menu' => '@@END-MENU@@',
@@ -1006,23 +1027,6 @@ class Seo
         ];
 
         $content = $this->injectContentMarkers($content, $markers);
-
-        //prefer data-lazy-src over src for images
-        $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
-            $imgTag = $matches[0];
-
-            if (!preg_match('/\bdata-lazy-src\s*=\s*(["\"])(.*?)\1/i', $imgTag, $lazyMatch)) {
-                return $imgTag;
-            }
-
-            $lazySrc = $lazyMatch[2];
-
-            if (preg_match('/\bsrc\s*=\s*(["\"])(.*?)\1/i', $imgTag)) {
-                return preg_replace('/\bsrc\s*=\s*(["\"]).*?\1/i', 'src="'.$lazySrc.'"', $imgTag, 1);
-            }
-
-            return preg_replace('/<img\b/i', '<img src="'.$lazySrc.'"', $imgTag, 1);
-        }, $content);
 
         $converter = new HtmlConverter(['header_style'=>'atx', 'strip_tags' => true, 'hard_break' => false]);
         $markdown = $converter->convert($content);
