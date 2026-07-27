@@ -1017,6 +1017,7 @@ class Seo
         return $content;
     }
 
+    
     private function generateMarkdown($content)
     {
         $content = $this->prepareContentForMenuFooterExtraction($content);
@@ -1051,9 +1052,89 @@ class Seo
             $markdown
         );
 
-        //remove empty lines
-        $markdown = preg_replace("/(^[\r\n]*|[\r\n]+)[\s\t]*[\r\n]+/", "\n", $markdown);
+        return $this->prettyPrintMarkdown($markdown);
+    }
 
-        return $markdown;
+    private function prettyPrintMarkdown(string $markdown): string
+    {
+        $markdown = preg_replace("/\r\n?/", "\n", $markdown);
+        $markdown = trim((string) $markdown);
+
+        if ($markdown === '') {
+            return '';
+        }
+
+        $lines = preg_split('/\n/', $markdown) ?: [];
+        $formattedLines = [];
+
+        foreach ($lines as $line) {
+            $line = rtrim($line);
+
+            if ($line === '') {
+                if (! empty($formattedLines) && end($formattedLines) !== '') {
+                    $formattedLines[] = '';
+                }
+
+                continue;
+            }
+
+            $currentType = $this->classifyMarkdownLine($line);
+            $shouldAddBlankLine = false;
+
+            if (! empty($formattedLines) && end($formattedLines) !== '') {
+                $previousType = $this->classifyMarkdownLine(end($formattedLines));
+
+                if ($currentType === 'heading' || $previousType === 'heading') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType === 'quote' || $previousType === 'quote') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType === 'code' || $previousType === 'code') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType === 'table' || $previousType === 'table') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType === 'list' && $previousType !== 'list') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType !== 'list' && $previousType === 'list') {
+                    $shouldAddBlankLine = true;
+                } elseif ($currentType === 'paragraph' && $previousType === 'paragraph') {
+                    $shouldAddBlankLine = true;
+                }
+            }
+
+            if ($shouldAddBlankLine) {
+                $formattedLines[] = '';
+            }
+
+            $formattedLines[] = $line;
+        }
+
+        $formattedMarkdown = implode("\n", $formattedLines);
+
+        return trim(preg_replace('/\n{3,}/', "\n\n", $formattedMarkdown) ?: $formattedMarkdown);
+    }
+
+    private function classifyMarkdownLine(string $line): string
+    {
+        if (preg_match('/^#{1,6}\s+/', $line) === 1) {
+            return 'heading';
+        }
+
+        if (preg_match('/^>\s?/', $line) === 1) {
+            return 'quote';
+        }
+
+        if (preg_match('/^(```|~~~)/', $line) === 1) {
+            return 'code';
+        }
+
+        if (preg_match('/^\s*(?:[-*+]\s+|\d+\.\s+)/', $line) === 1) {
+            return 'list';
+        }
+
+        if (preg_match('/^\|/', $line) === 1) {
+            return 'table';
+        }
+
+        return 'paragraph';
     }
 }
