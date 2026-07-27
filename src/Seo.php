@@ -282,13 +282,13 @@ class Seo
 
     private function getPageContent($url)
     {
-        if (! is_string($url)) {
+        if (!is_string($url)) {
             return '';
         }
 
         $parts = parse_url($url);
         $scheme = $parts['scheme'] ?? null;
-        if ($scheme === null || ! in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
+        if ($scheme === null || !in_array(strtolower($scheme), self::ALLOWED_SCHEMES, true)) {
             return '';
         }
 
@@ -379,19 +379,19 @@ class Seo
         }
 
         return [
-            'node' => $betweenNode,
+            'node'   => $betweenNode,
             'childs' => [],
         ];
     }
 
     private function getBetweenMenuFooterHtml($content)
     {
-        if (! is_string($content) || $content === '') {
+        if (!is_string($content) || $content === '') {
             return null;
         }
 
         $markers = [
-            'end_menu' => '@@END-MENU@@',
+            'end_menu'     => '@@END-MENU@@',
             'start_footer' => '@@START-FOOTER@@',
         ];
 
@@ -407,7 +407,7 @@ class Seo
         $startPos += strlen($markers['end_menu']);
         $between = substr($markedContent, $startPos, $endPos - $startPos);
 
-        if (! is_string($between) || trim(strip_tags($between)) === '') {
+        if (!is_string($between) || trim(strip_tags($between)) === '') {
             return null;
         }
 
@@ -416,7 +416,7 @@ class Seo
 
     private function getNodeHtml($node)
     {
-        if ($node === null || ! isset($node->tagName)) {
+        if ($node === null || !isset($node->tagName)) {
             return '';
         }
 
@@ -723,7 +723,7 @@ class Seo
 
     private function fixUrl($url)
     {
-        if (! is_string($url) || $url === '') {
+        if (!is_string($url) || $url === '') {
             return $url;
         }
 
@@ -777,7 +777,7 @@ class Seo
 
     private function isInternal($url)
     {
-        if (! is_string($url) || $url === '' || $this->domainname === null) {
+        if (!is_string($url) || $url === '' || $this->domainname === null) {
             return false;
         }
 
@@ -788,7 +788,6 @@ class Seo
         }
 
         return stripos($url, (string) $this->domainname) !== false;
-
     }
 
     private function str_word_count($string)
@@ -1017,13 +1016,12 @@ class Seo
         return $content;
     }
 
-    
     private function generateMarkdown($content)
     {
         $content = $this->prepareContentForMenuFooterExtraction($content);
 
         $markers = [
-            'end_menu' => '@@END-MENU@@',
+            'end_menu'     => '@@END-MENU@@',
             'start_footer' => '@@START-FOOTER@@',
         ];
 
@@ -1071,7 +1069,7 @@ class Seo
             $line = rtrim($line);
 
             if ($line === '') {
-                if (! empty($formattedLines) && end($formattedLines) !== '') {
+                if (!empty($formattedLines) && end($formattedLines) !== '') {
                     $formattedLines[] = '';
                 }
 
@@ -1081,7 +1079,7 @@ class Seo
             $currentType = $this->classifyMarkdownLine($line);
             $shouldAddBlankLine = false;
 
-            if (! empty($formattedLines) && end($formattedLines) !== '') {
+            if (!empty($formattedLines) && end($formattedLines) !== '') {
                 $previousType = $this->classifyMarkdownLine(end($formattedLines));
 
                 if ($currentType === 'heading' || $previousType === 'heading') {
