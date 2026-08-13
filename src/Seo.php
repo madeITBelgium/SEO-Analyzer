@@ -992,10 +992,10 @@ class Seo
     private function prepareContentForMenuFooterExtraction(string $content): string
     {
         // Keep preprocessing identical for markdown and HTML main-content extraction.
-        $content = preg_replace('/<head>.*?<\/head>/s', '', $content);
-        $content = preg_replace('/<script.*?>.*?<\/script>/s', '', $content);
-        $content = preg_replace('/<style.*?>.*?<\/style>/s', '', $content);
-        $content = preg_replace('/<noscript>.*?<\/noscript>/s', '', $content);
+        $content = $this->removeTagBlocks($content, 'head');
+        $content = $this->removeTagBlocks($content, 'script');
+        $content = $this->removeTagBlocks($content, 'style');
+        $content = $this->removeTagBlocks($content, 'noscript');
 
         // Prefer lazy-loaded image source when available.
         $content = preg_replace_callback('/<img\b[^>]*>/i', function ($matches) {
@@ -1111,6 +1111,39 @@ class Seo
         $formattedMarkdown = implode("\n", $formattedLines);
 
         return trim(preg_replace('/\n{3,}/', "\n\n", $formattedMarkdown) ?: $formattedMarkdown);
+    }
+    
+    private function removeTagBlocks(string $content, string $tag): string
+    {
+        $openTag = '<'.strtolower($tag);
+        $closeTag = '</'.strtolower($tag);
+        $offset = 0;
+
+        while (($start = stripos($content, $openTag, $offset)) !== false) {
+            $openEnd = strpos($content, '>', $start);
+            if ($openEnd === false) {
+                break;
+            }
+
+            $closeStart = stripos($content, $closeTag, $openEnd + 1);
+            if ($closeStart === false) {
+                $offset = $openEnd + 1;
+
+                continue;
+            }
+
+            $closeEnd = strpos($content, '>', $closeStart);
+            if ($closeEnd === false) {
+                $offset = $openEnd + 1;
+
+                continue;
+            }
+
+            $content = substr($content, 0, $start).substr($content, $closeEnd + 1);
+            $offset = $start;
+        }
+
+        return $content;
     }
 
     private function classifyMarkdownLine(string $line): string
